@@ -5,6 +5,7 @@
 #include <iostream>
 
 void framebufferSizeCallback(GLFWwindow *window, int width, int height) {
+
     glViewport(0, 0, width, height);
 }
 
@@ -13,7 +14,6 @@ void processInput(GLFWwindow *window) {
         glfwSetWindowShouldClose(window, true);
     }
 }
-
 int main(int argc, char *argv[]) {
     glfwInit();
     glfwInitHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -22,7 +22,6 @@ int main(int argc, char *argv[]) {
 #ifdef __APPPLE__
     glfwInitHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
-    std::string windowTitle;
     auto window = glfwCreateWindow(500, 500, "LearnOpenGL", nullptr, nullptr);
     if (!window) {
         std::cout << "Failed to create GLFW window" << std::endl;
