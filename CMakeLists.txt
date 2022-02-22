@@ -20,6 +20,9 @@ endmacro(add_demo)
 
 add_demo(CreateWindow src/getting_started/creating_window.cpp)
 add_demo(HelloTriangle src/getting_started/hello_triangle.cpp)
+add_demo(HelloTriangleVAO src/getting_started/hello_triangle_vao.cpp)
+add_demo(HelloTriangleEBO src/getting_started/hello_triangle_ebo.cpp)
+add_demo(ShadersUniform src/getting_started/shaders_uniform.cpp)
 
 
 add_subdirectory(3rdpart/glfw)

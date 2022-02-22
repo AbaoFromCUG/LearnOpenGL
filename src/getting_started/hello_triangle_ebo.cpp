@@ -6,14 +6,21 @@
 
 // clang-format off
 float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-     0.0f,  0.5f, 0.0f
+0.5f, 0.5f, 0.0f,   // 右上角
+0.5f, -0.5f, 0.0f,  // 右下角
+-0.5f, -0.5f, 0.0f, // 左下角
+-0.5f, 0.5f, 0.0f   // 左上角
+};
+
+unsigned int indices[]={
+0, 1, 3,
+    1, 2, 3
 };
 
 const char* vertexShaderSource = R"(
-#version 120
-attribute vec3 aPos;
+#version 330 core
+layout (location = 0) in vec3 aPos;
+out vec3 ourColor;
 
 void main()
 {
@@ -22,11 +29,12 @@ void main()
 )";
 
 const char* fragmentShaderSource = R"(
-#version 120
+#version 330 core
+out vec4 FragColor;
 
 void main()
 {
-    gl_FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
 }
 
 )";
@@ -41,16 +49,17 @@ void processInput(GLFWwindow *window) {
     }
 }
 
-int main(int argc, char *argv[]) {
+int main() {
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwInitHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #ifdef __APPLE__
     std::cout << "apple machine" << std::endl;
     glfwInitHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
-    auto window = glfwCreateWindow(500, 600, "Hello Triangle", nullptr, nullptr);
+
+    auto window = glfwCreateWindow(500, 600, "Hello Triangle EBO", nullptr, nullptr);
     if (!window) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -68,10 +77,18 @@ int main(int argc, char *argv[]) {
 
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
-    unsigned int VBO;
+    unsigned int VAO, VBO, EBO;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+    glEnableVertexAttribArray(0);
 
     int status;
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -98,7 +115,6 @@ int main(int argc, char *argv[]) {
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
 
-    glBindAttribLocation(shaderProgram, 0, "aPos");
 
     glLinkProgram(shaderProgram);
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
@@ -118,11 +134,11 @@ int main(int argc, char *argv[]) {
         glClearColor(0.2, 0.3, 0.3, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-        glEnableVertexAttribArray(0);
-
         glUseProgram(shaderProgram);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(VAO);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

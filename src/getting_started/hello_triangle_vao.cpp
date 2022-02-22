@@ -5,28 +5,39 @@
 #include <iostream>
 
 // clang-format off
-float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-     0.0f,  0.5f, 0.0f
+float triangle1[] = {
+0, 0, 0, 1, 0, 0,
+    -0.5f, -0.5f, 0.0f,  0, 1,0,
+     0.5f, -0.5f, 0.0f, 0,  0,1,
+};
+
+float triangle2[] = {
+    0, 0, 0, 1, 0, 0,
+     -0.5, 0.5, 0,0, 1, 0,
+     0.5,  0.5, 0,0,0,1
 };
 
 const char* vertexShaderSource = R"(
-#version 120
-attribute vec3 aPos;
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aColor;
+out vec3 ourColor;
 
 void main()
 {
+    ourColor = aColor;
     gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
 }
 )";
 
 const char* fragmentShaderSource = R"(
-#version 120
+#version 330 core
+out vec4 FragColor;
+in vec3 ourColor;
 
 void main()
 {
-    gl_FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+    FragColor = vec4(ourColor, 1.0f);
 }
 
 )";
@@ -41,16 +52,17 @@ void processInput(GLFWwindow *window) {
     }
 }
 
-int main(int argc, char *argv[]) {
+int main() {
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwInitHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #ifdef __APPLE__
     std::cout << "apple machine" << std::endl;
     glfwInitHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
-    auto window = glfwCreateWindow(500, 600, "Hello Triangle", nullptr, nullptr);
+
+    auto window = glfwCreateWindow(500, 600, "Hello Triangle VAO", nullptr, nullptr);
     if (!window) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -68,10 +80,27 @@ int main(int argc, char *argv[]) {
 
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    unsigned int triangle1_vao, triangle1_vbo;
+    glGenVertexArrays(1, &triangle1_vao);
+    glBindVertexArray(triangle1_vao);
+    glGenBuffers(1, &triangle1_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, triangle1_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle1), triangle1, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    unsigned int triangle2_vao, triangle2_vbo;
+    glGenVertexArrays(1, &triangle2_vao);
+    glBindVertexArray(triangle2_vao);
+    glGenBuffers(1, &triangle2_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, triangle2_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle2), triangle2, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     int status;
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -98,7 +127,6 @@ int main(int argc, char *argv[]) {
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
 
-    glBindAttribLocation(shaderProgram, 0, "aPos");
 
     glLinkProgram(shaderProgram);
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
@@ -118,11 +146,14 @@ int main(int argc, char *argv[]) {
         glClearColor(0.2, 0.3, 0.3, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-        glEnableVertexAttribArray(0);
+        glUseProgram(shaderProgram);
+        glBindVertexArray(triangle1_vao);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glUseProgram(shaderProgram);
+        glBindVertexArray(triangle2_vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

@@ -1,5 +1,7 @@
 build/
 .cache/
+.idea/
+cmake-build-*/
 
 # Created by https://www.toptal.com/developers/gitignore/api/c++,cmake,macos,linux,vim
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,cmake,macos,linux,vim
