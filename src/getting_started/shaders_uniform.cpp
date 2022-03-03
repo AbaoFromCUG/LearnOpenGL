@@ -37,24 +37,23 @@ void main()
 
 void framebufferSizeCallback(GLFWwindow *window, int width, int height) { glViewport(0, 0, width, height); }
 
-void processInput(GLFWwindow *window) {
+void processEvent(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        glfwWindowShouldClose(window);
+        glfwSetWindowShouldClose(window, true);
     }
 }
 
 int main() {
-
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwInitHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #ifdef __APPLE__
     std::cout << "apple machine" << std::endl;
-    glfwInitHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
 
-    auto window = glfwCreateWindow(500, 600, "Hello Triangle VAO", nullptr, nullptr);
+    auto window = glfwCreateWindow(500, 600, "Shader Uniform", nullptr, nullptr);
     if (!window) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -123,7 +122,7 @@ int main() {
 
     while (!glfwWindowShouldClose(window)) {
 
-        processInput(window);
+        processEvent(window);
 
         glClearColor(0.2, 0.3, 0.3, 1);
         glClear(GL_COLOR_BUFFER_BIT);

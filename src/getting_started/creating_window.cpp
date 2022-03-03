@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     glfwInitHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwInitHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwInitHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#ifdef __APPPLE__
+#ifdef __APPLE__
     glfwInitHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
     auto window = glfwCreateWindow(500, 500, "LearnOpenGL", nullptr, nullptr);

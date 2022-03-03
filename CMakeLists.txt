@@ -6,16 +6,29 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(cmake/CPM.cmake)
+include(cmake/3rdparty.cmake)
 
-cpmaddpackage(NAME GLAD GITHUB_REPOSITORY "Dav1dde/glad" VERSION 0.1.36)
+
+add_library(common STATIC
+        src/common/common_utils.cpp
+        src/common/shader.cpp
+        )
+add_custom_command(TARGET common POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/res ${CMAKE_CURRENT_BINARY_DIR}/res
+        )
+
+target_link_libraries(common PRIVATE glad glfw stb)
+target_include_directories(common PUBLIC src/common/)
 
 macro(add_demo targetName sources)
 
-  message(STATUS ${sources})
-  add_executable(${targetName} ${sources})
-
-  target_link_libraries(${targetName} PRIVATE glad glfw)
-
+    add_executable(${targetName} ${sources})
+    target_link_libraries(${targetName} PRIVATE
+            glad
+            glfw
+            stb
+            common
+            )
 endmacro(add_demo)
 
 add_demo(CreateWindow src/getting_started/creating_window.cpp)
@@ -23,6 +36,4 @@ add_demo(HelloTriangle src/getting_started/hello_triangle.cpp)
 add_demo(HelloTriangleVAO src/getting_started/hello_triangle_vao.cpp)
 add_demo(HelloTriangleEBO src/getting_started/hello_triangle_ebo.cpp)
 add_demo(ShadersUniform src/getting_started/shaders_uniform.cpp)
-
-
-add_subdirectory(3rdpart/glfw)
+add_demo(Textures src/getting_started/textures.cpp)
