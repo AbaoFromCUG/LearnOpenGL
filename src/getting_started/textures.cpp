@@ -72,7 +72,7 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
 
-    auto window = glfwCreateWindow(500, 600, "Textures", nullptr, nullptr);
+    auto window = glfwCreateWindow(500, 600, "Popup-Textures", nullptr, nullptr);
     if (!window) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();

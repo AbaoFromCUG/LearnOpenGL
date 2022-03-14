@@ -17,7 +17,7 @@ add_custom_command(TARGET common POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/res ${CMAKE_CURRENT_BINARY_DIR}/res
         )
 
-target_link_libraries(common PRIVATE glad glfw stb)
+target_link_libraries(common PRIVATE glad glfw stb glm)
 target_include_directories(common PUBLIC src/common/)
 
 macro(add_demo targetName sources)
@@ -28,6 +28,7 @@ macro(add_demo targetName sources)
             glfw
             stb
             common
+            glm
             )
 endmacro(add_demo)
 
@@ -37,3 +38,4 @@ add_demo(HelloTriangleVAO src/getting_started/hello_triangle_vao.cpp)
 add_demo(HelloTriangleEBO src/getting_started/hello_triangle_ebo.cpp)
 add_demo(ShadersUniform src/getting_started/shaders_uniform.cpp)
 add_demo(Textures src/getting_started/textures.cpp)
+add_demo(Transformations src/getting_started/transformations.cpp)

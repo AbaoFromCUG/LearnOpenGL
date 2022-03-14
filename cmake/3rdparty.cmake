@@ -14,6 +14,11 @@ cpmaddpackage(NAME GLAD
         VERSION 0.1.36
         )
 
+cpmaddpackage(NAME GLM
+        GITHUB_REPOSITORY "g-truc/glm"
+        GIT_TAG 0.9.9.8
+        )
+
 cpmaddpackage(
         NAME stb
         GITHUB_REPOSITORY "nothings/stb"

@@ -6,4 +6,4 @@ AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 IndentWidth: 4
-ColumnLimit: 120
+ColumnLimit: 150
