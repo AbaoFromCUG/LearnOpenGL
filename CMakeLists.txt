@@ -12,6 +12,7 @@ include(cmake/3rdparty.cmake)
 add_library(common STATIC
         src/common/common_utils.cpp
         src/common/shader.cpp
+        src/common/player_camera.cpp
         )
 add_custom_command(TARGET common POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/res ${CMAKE_CURRENT_BINARY_DIR}/res
@@ -39,3 +40,5 @@ add_demo(HelloTriangleEBO src/getting_started/hello_triangle_ebo.cpp)
 add_demo(ShadersUniform src/getting_started/shaders_uniform.cpp)
 add_demo(Textures src/getting_started/textures.cpp)
 add_demo(Transformations src/getting_started/transformations.cpp)
+add_demo(CoordinateSystems src/getting_started/coordinate_system.cpp)
+add_demo(Camera src/getting_started/camera.cpp)
