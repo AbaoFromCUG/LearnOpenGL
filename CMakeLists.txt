@@ -2,20 +2,32 @@ cmake_minimum_required(VERSION 3.5)
 
 project(LearnOpenGL LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(cmake/CPM.cmake)
 include(cmake/3rdparty.cmake)
 
+file(GLOB_RECURSE res_files RELATIVE ${CMAKE_CURRENT_LIST_DIR} "res/**")
+
+foreach (file ${res_files})
+    add_custom_command(
+            OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${file}"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/${file}" "${CMAKE_CURRENT_BINARY_DIR}/${file}"
+            DEPENDS "${CMAKE_CURRENT_LIST_DIR}/${file}"
+    )
+endforeach ()
+
+list(TRANSFORM res_files PREPEND "${CMAKE_CURRENT_BINARY_DIR}/")
+
+message(STATUS ${res_files})
+
+add_custom_target(CopyResource ALL
+        DEPENDS ${res_files}
+        )
 
 add_library(common STATIC
         src/common/common_utils.cpp
         src/common/shader.cpp
         src/common/player_camera.cpp
-        )
-add_custom_command(TARGET common POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/res ${CMAKE_CURRENT_BINARY_DIR}/res
         )
 
 target_link_libraries(common PRIVATE glad glfw stb glm)
@@ -31,6 +43,7 @@ macro(add_demo targetName sources)
             common
             glm
             )
+    add_dependencies(${targetName} CopyResource)
 endmacro(add_demo)
 
 add_demo(CreateWindow src/getting_started/creating_window.cpp)
@@ -42,3 +55,6 @@ add_demo(Textures src/getting_started/textures.cpp)
 add_demo(Transformations src/getting_started/transformations.cpp)
 add_demo(CoordinateSystems src/getting_started/coordinate_system.cpp)
 add_demo(Camera src/getting_started/camera.cpp)
+
+add_demo(BasicLighting src/lighting/basic_lighting.cpp)
+add_demo(BasicGouraudLighting src/lighting/basic_gouraud_lighting.cpp)

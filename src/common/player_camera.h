@@ -22,6 +22,9 @@ public:
     PlayerCamera();
 
 public:
+    const glm::vec3 &position() const { return m_cameraPos; }
+
+public:
     void move(Movement direction, float deltaTime);
     void rotate(float deltaX, float deltaY);
 
