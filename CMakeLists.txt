@@ -29,6 +29,9 @@ add_library(common STATIC
         src/common/shader.cpp
         src/common/player_camera.cpp
         )
+target_compile_features(common PUBLIC
+        cxx_std_17
+        )
 
 target_link_libraries(common PRIVATE glad glfw stb glm)
 target_include_directories(common PUBLIC src/common/)
